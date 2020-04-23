@@ -61,39 +61,15 @@ while True:
     results = tfnet.return_predict(frame) #encuentra los resultados de la R-CNN
 
     for color, result in zip(colors, results):
-
-        # Obtenemos coordenadas de cada objeto reconocido (solo la esquina superior izquierda y la esquina inferior derecha)
-        tl = (result['topleft']['x'], result['topleft']['y'])# Coordenadas de la esquina superior izquierda
-        br = (result['bottomright']['x'], result['bottomright']['y'])# Coordenadas de la esquina inferior derecha
-
         #Recortamos la imegen entera con solo la area del objeto reconocido
-        Imagen_Auxiliar = frame[tl[1]:br[1],tl[0]:br[0]]
+        tl,br,label,confidence = FC.Obtener_Info_IR(result)
 
         # ************************ Reconocimiento de enemigo o amigo *********************
+        frame = FC.Identificar_Compa_Ene(frame,tl,br,Colores)
 
-        # Conversion de colores
-        hsv_image = cv2.cvtColor(Imagen_Auxiliar,cv2.COLOR_BGR2HSV)#Convertimos BGR  a HSV para deteccion de colores
+        #---------------Ingresar Texto en imagen------------------------------------
+        frame = FC.Dibujar_Info(frame,tl,br,color,label,confidence)
 
-        # Buscar areas de la imagen con el color definido
-        mascaraR = cv2.inRange(hsv_image,Colores[0],Colores[1])#verifica cuales pixeles  estan dentro del rango, los que no esten los hace negros
-        mascaraB = cv2.inRange(hsv_image,Colores[2],Colores[3])#verifica cuales pixeles  estan dentro del rango, los que no esten los hace negros
-        # Encontrar pixeles de contornos de objetos
-        ContornoRojo = cv2.findContours(mascaraR,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)[0]
-        ContornoAzul = cv2.findContours(mascaraB,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)[0]
-        # Dibujar contornos
-        FC.DibujarContornos(Imagen_Auxiliar,ContornoRojo,(255,255,255),"Equipo")
-        FC.DibujarContornos(Imagen_Auxiliar,ContornoAzul,(255,255,255),"Enemigo")
-
-
-        label = result['label'] # Clase a la que pertenece el reconocimiento
-        confidence = result['confidence'] # Porcentaje de seguridad de pertenencia a la clase
-        text = '{}: {:.0f}%'.format(label, confidence * 100) # Texto a insertar
-        frame = cv2.rectangle(frame, tl, br, color, 5) # Dibujar rectangulo
-
-        # Sustituimos el area de la imagen original con la reconocida
-        frame[tl[1]:br[1],tl[0]:br[0]] = Imagen_Auxiliar
-
-        frame = cv2.putText(frame, text, tl, cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 0), 2) # Poner texto
     cv2.imshow('frame', frame)# MMostrar imagen resultante
     print('FPS {:.1f}'.format(1 / (time.time() - stime))) #Imprimir FPS
     if cv2.waitKey(1) & 0xFF == ord('q'): # Condicion para parar la transmision

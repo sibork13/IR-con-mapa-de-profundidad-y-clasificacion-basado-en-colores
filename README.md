@@ -1,4 +1,4 @@
-# IR-con-mapa-de-profundidad-y-clasificacion-basado-en-colores
+# IR con mapa de profundidad y clasificacion basado en colores
 
 El sistema captura la escena y, con uso de la real sense
 se obtiene la imagen y un mapa de profundidad.

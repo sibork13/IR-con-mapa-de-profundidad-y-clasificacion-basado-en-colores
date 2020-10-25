@@ -41,7 +41,7 @@ while True:
     # Eliminar fondo de la imagen a color
     frame = FC.EliminarFondo(frame,profundidad,clipping_distance,153)# Eliminamos fondo
 
-    # Eliminación de ruido
+    # # Eliminación de ruido
     # frame = cv2.GaussianBlur(frame,(45,45),0)
 
     # Iniciar a contar tiempo para contar FPS
@@ -64,6 +64,9 @@ while True:
         max_total_size=50,
     )
     pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
+
+    # Eliminación de ruido
+    frame = cv2.GaussianBlur(frame,(45,45),0)
 
     # Dibujar cuadro de reconocimiento
     image = FC.draw_bbox(frame,pred_bbox,file_names,Colores,profundidad)

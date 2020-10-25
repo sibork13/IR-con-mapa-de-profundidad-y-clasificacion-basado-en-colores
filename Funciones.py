@@ -71,8 +71,16 @@ def read_class_names(class_file_name):
     return names
 
 def DibujarContornos(imagen,contornos,color,Palabra,Imagen_Profundidad):
+    area = -1
+    ayuda=0 # En caso de que no haya contornos, salimos de la funcion
     for c in contornos:
-        M = cv2.moments(c) # Se encuentra el centroide de todos los momentos encontrados
+        ayuda = ayuda+1
+        Maux = cv2.moments(c)
+        if Maux["m00"] > area: # Buscamos solo el contorno myor (para evitar tener varios enemigos en un robot)
+            M = Maux
+            area = Maux["m00"]
+
+    if ayuda > 0:
         if (M["m00"]==0):M["m00"]=1 # En caso de que el denominador sea 0 se cambia a 1
         x = int(M["m10"] / M["m00"]) # Se saca el centro en y
         y = int(M["m01"] / M["m00"]) # Se saca el cntro en X
@@ -82,6 +90,7 @@ def DibujarContornos(imagen,contornos,color,Palabra,Imagen_Profundidad):
         approx = cv2.approxPolyDP(c,epsilon,True)
         cv2.drawContours(imagen,approx,0,color,2)
         cv2.putText(imagen,str(Palabra)+"D: "+str(Dist),(x,y),1,2,(0,0,0),2) # Pone texto
+
 
 def Identificar_Compa_Ene(Imagen,IzquierdaSuperior,DerechaInferior,Colores,Imagen_Profundidad):
     Imagen_Auxiliar = Imagen[int(IzquierdaSuperior[1]):int(DerechaInferior[1]),int(IzquierdaSuperior[0]):int(DerechaInferior[0])]

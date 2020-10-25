@@ -21,6 +21,7 @@ file_names = "obj.names"
 
 # Preparar transmision de realsense a sistemas
 FPS = 30 #Numero de fotogramas deseado  (maximo 30)
+# pipeline,profile = FC.ConfigurarRealSense(1280,720,FPS)#introducir la resolucion a capturar 1280,720  640,480
 pipeline,profile = FC.ConfigurarRealSense(640,480,FPS)#introducir la resolucion a capturar 1280,720  640,480
 
 # Configurar la limitacion de vision
@@ -40,9 +41,6 @@ while True:
 
     # Eliminar fondo de la imagen a color
     frame = FC.EliminarFondo(frame,profundidad,clipping_distance,153)# Eliminamos fondo
-
-    # # Eliminación de ruido
-    # frame = cv2.GaussianBlur(frame,(45,45),0)
 
     # Iniciar a contar tiempo para contar FPS
     start_time = time.time()
@@ -65,8 +63,7 @@ while True:
     )
     pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
 
-    # Eliminación de ruido
-    frame = cv2.GaussianBlur(frame,(45,45),0)
+
 
     # Dibujar cuadro de reconocimiento
     image = FC.draw_bbox(frame,pred_bbox,file_names,Colores,profundidad)
@@ -74,7 +71,7 @@ while True:
     # Calcular FPS
     fps = 1.0 / (time.time() - start_time)
     # MOstrar FPS
-    # print("FPS: %.2f" % fps)
+    print("FPS: %.2f" % fps)
     # Acondicionar para mostrar imagen
     result = np.asarray(image)
     #Mostrar resultado

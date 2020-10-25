@@ -94,8 +94,10 @@ def DibujarContornos(imagen,contornos,color,Palabra,Imagen_Profundidad):
 
 def Identificar_Compa_Ene(Imagen,IzquierdaSuperior,DerechaInferior,Colores,Imagen_Profundidad):
     Imagen_Auxiliar = Imagen[int(IzquierdaSuperior[1]):int(DerechaInferior[1]),int(IzquierdaSuperior[0]):int(DerechaInferior[0])]
+    # Aplicamos filtro
+    Imagen_Auxiliar_2=cv2.GaussianBlur(Imagen_Auxiliar,(45,45),0)
     # Conversion de colores
-    hsv_image = cv2.cvtColor(Imagen_Auxiliar,cv2.COLOR_BGR2HSV)#Convertimos BGR  a HSV para deteccion de colores
+    hsv_image = cv2.cvtColor(Imagen_Auxiliar_2,cv2.COLOR_BGR2HSV)#Convertimos BGR  a HSV para deteccion de colores
     # Buscar areas de la imagen con el color definido
     mascaraR = cv2.inRange(hsv_image,Colores[0],Colores[1])#verifica cuales pixeles  estan dentro del rango, los que no esten los hace negros
     mascaraB = cv2.inRange(hsv_image,Colores[2],Colores[3])#verifica cuales pixeles  estan dentro del rango, los que no esten los hace negros
